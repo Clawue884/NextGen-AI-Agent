@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Contoh service untuk aplikasi backend (Node.js)
+  backend:
+    image: your-backend-image
+    container_name: backend
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app                 # Volume untuk mengembangkan kode backend secara langsung
+      - backend-data:/var/lib/postgresql/data  # Volume untuk menyimpan data database
+    depends_on:
+      - db
+
+  # Contoh service untuk database (PostgreSQL)
+  db:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=dev_user
+      - POSTGRES_PASSWORD=dev_password
+      - POSTGRES_DB=dev_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Volume untuk persisten data PostgreSQL
+
+  # Contoh service untuk MinIO (untuk penyimpanan S3)
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=dev_minio_user
+      - MINIO_ROOT_PASSWORD=dev_minio_password
+    ports:
+      - "9000:9000"
+    volumes:
+      - minio-data:/data    # Volume untuk menyimpan data MinIO
+
+volumes:
+  db-data:        # Volume untuk database PostgreSQL
+    driver: local
+  minio-data:     # Volume untuk data MinIO
+    driver: local
+  backend-data:   # Volume untuk data backend (misal file upload)
+    driver: local
